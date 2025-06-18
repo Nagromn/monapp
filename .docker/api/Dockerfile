@@ -22,6 +22,8 @@ RUN useradd dev -g dev -d /home/dev -m
 
 RUN rm -rf /var/lib/apt/lists/*
 
-CMD ["apachectl", "-D", "FOREGROUND"]
+COPY .docker/api/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 80
