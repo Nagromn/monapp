@@ -1,0 +1,6 @@
+[submodule "api"]
+	path = api
+	url = https://github.com/Nagromn/monapp-api
+[submodule "app"]
+	path = app
+	url = https://github.com/Nagromn/monapp-app
