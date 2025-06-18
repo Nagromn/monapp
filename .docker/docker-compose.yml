@@ -1,0 +1,63 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: .docker/api/Dockerfile
+    container_name: ${PROJECT}_api
+    volumes:
+      - ../api:/var/www/html
+      - ./api/apache2/sites-enabled:/etc/apache2/sites-enabled
+    depends_on:
+      - db
+    networks:
+      - default
+    ports:
+      - 8080:80
+
+  app:
+    build:
+      context: ..
+      dockerfile: .docker/app/Dockerfile
+    container_name: ${PROJECT}_app
+    volumes:
+      - ../app:/var/www/html
+    networks:
+      - default
+    ports:
+      - 4200:4200
+
+  db:
+    image: mariadb:11.4.2
+    container_name: ${PROJECT}_db
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASS}
+      MYSQL_DATABASE: ${MYSQL_DB}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASS}
+    networks:
+      - default
+    ports:
+      - 3306:3306
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test:
+        ["CMD", "mysqladmin", "ping", "-u", "${MYSQL_USER}", "-p${MYSQL_PASS}"]
+      interval: 10s
+      retries: 5
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: ${PROJECT}_mailpit
+    networks:
+      - default
+    ports:
+      - 1025:1025
+      - 8025:8025
+
+volumes:
+  db-data: {}
+
+networks:
+  default:
+    name: ${PROJECT}
