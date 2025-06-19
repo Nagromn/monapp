@@ -22,8 +22,10 @@ RUN useradd dev -g dev -d /home/dev -m
 
 RUN rm -rf /var/lib/apt/lists/*
 
-COPY .docker/api/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+COPY ../../api/ .
+
+RUN composer install --no-interaction --prefer-dist
 
 EXPOSE 80
+
+CMD ["apachectl", "-D", "FOREGROUND"]
